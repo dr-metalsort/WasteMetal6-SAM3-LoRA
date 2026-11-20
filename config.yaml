@@ -1,0 +1,88 @@
+# config.yaml
+# Text-Full-D: SAM 3 with LoRA, text-prompted, full images (768 x 768)
+# LoRA ranks: vision encoder 4, DETR encoder 16, DETR decoder 32, mask decoder 4
+# alpha 32, dropout 0.15
+output_dir: outputs/text_full_d  # logs and results (change if needed)
+checkpoint:
+  save_dir: outputs/text_full_d/checkpoints  # model checkpoints (change if needed)
+  resume_from: null
+dataset:
+  root: path/to/dataset  # dataset folder with train/, valid/, test/ (see README)
+  image_size: 768
+  class_names:
+  - Aluminium
+  - Brass
+  - Copper
+  - Ferrous Metal
+  - Galvanized Steel
+  - Stainless Steel
+augmentation:
+  enabled: true
+  horizontal_flip_p: 0.5
+  vertical_flip_p: 0.3
+  color_jitter:
+    enabled: true
+    brightness: 0.25
+    contrast: 0.25
+    saturation: 0.2
+    hue: 0.02
+  gaussian_blur:
+    enabled: true
+    p: 0.2
+    kernel_sizes:
+    - 3
+    - 5
+  random_grayscale_p: 0.05
+model:
+  hf_model_id: facebook/sam3
+  lora:
+    alpha: 32
+    dropout: 0.15
+    vision:
+      r: 4
+    detr_encoder:
+      r: 16
+    detr_decoder:
+      r: 32
+    mask_decoder:
+      r: 4
+training:
+  num_epochs: 200
+  batch_size_images: 1
+  grad_accum_steps: 4
+  use_amp: true
+  amp_dtype: bf16
+  gradient_clip_norm: 1.0
+  weight_decay: 0.01
+  betas:
+  - 0.9
+  - 0.999
+  save_every_n_epochs: 5
+  learning_rate:
+    lora: 0.0001
+  lr_scheduler:
+    warmup_epochs: 3
+    min_lr: 5.0e-06
+  early_stopping:
+    patience: 10
+    min_delta: 0.0
+    mode: min
+  memory:
+    gradient_checkpointing: true
+loss:
+  presence_weight: 0.3
+  presence_focal_gamma: 2.0
+  score_weight: 1.0
+  box_weight: 1.0
+  mask_weight: 1.5
+  matcher:
+    cls_cost: 1.0
+    l1_cost: 5.0
+    giou_cost: 2.0
+hardware:
+  seed: 42
+  deterministic: false
+  num_workers: 8
+  pin_memory: true
+  persistent_workers: true
+  prefetch_factor: 4
