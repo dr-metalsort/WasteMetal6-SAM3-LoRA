@@ -46,4 +46,4 @@ python evaluate.py --config config.yaml \
 Add `--save-qualitative` to save side-by-side images of ground truth and predictions.
 
 ## License
-[Author: choose, e.g., MIT]. SAM 3 weights are subject to Meta's SAM license and are not included.
+This code is released under the MIT License. SAM 3 weights are subject to Meta's SAM license and are not included..
